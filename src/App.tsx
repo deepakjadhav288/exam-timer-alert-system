@@ -140,6 +140,7 @@ function App(): React.JSX.Element {
 
           <SessionSummary
             timeRemaining={timer.timeRemaining}
+            totalDuration={totalDurationSeconds}
             violations={violations.violations}
             countByType={violations.countByType}
             onRestart={handleRestart}

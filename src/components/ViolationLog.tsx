@@ -43,7 +43,8 @@ export function ViolationLog({
     ? sortedViolations.slice(0, maxItems)
     : sortedViolations;
 
-  const hasMore = maxItems > 0 && violations.length > maxItems;
+  // Check if we're showing limited items
+  const isLimited = maxItems > 0 && violations.length > maxItems;
 
   if (violations.length === 0) {
     return (
@@ -60,12 +61,19 @@ export function ViolationLog({
 
   return (
     <div className="violation-log">
-      <h4 className="violation-log__title">
-        Violation Timeline
-        <span className="violation-log__count">
-          ({violations.length})
-        </span>
-      </h4>
+      <div className="violation-log__header">
+        <h4 className="violation-log__title">
+          Violation Timeline
+          <span className="violation-log__count">
+            ({violations.length})
+          </span>
+        </h4>
+        {isLimited && (
+          <span className="violation-log__hint">
+            Showing {maxItems} most recent
+          </span>
+        )}
+      </div>
 
       <ul className="violation-log__list" role="log" aria-label="Violation timeline">
         {displayViolations.map((violation, index) => (
@@ -88,15 +96,8 @@ export function ViolationLog({
           </li>
         ))}
       </ul>
-
-      {hasMore && (
-        <div className="violation-log__more">
-          +{violations.length - maxItems} more violations
-        </div>
-      )}
     </div>
   );
 }
 
 export default ViolationLog;
-

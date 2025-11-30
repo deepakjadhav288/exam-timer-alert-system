@@ -10,7 +10,6 @@ import {
   Violation,
   ViolationType,
   VIOLATION_LABELS,
-  DEFAULT_EXAM_DURATION,
 } from '../types';
 import { formatTime, formatTimestamp } from '../utils';
 import './SessionSummary.css';
@@ -18,6 +17,8 @@ import './SessionSummary.css';
 interface SessionSummaryProps {
   /** Time remaining when exam ended (0 if completed) */
   timeRemaining: number;
+  /** Total exam duration in seconds (configured by user) */
+  totalDuration: number;
   /** All violations that occurred */
   violations: Violation[];
   /** Violations grouped by type */
@@ -40,12 +41,13 @@ const VIOLATION_ICONS: Record<ViolationType, string> = {
  */
 export function SessionSummary({
   timeRemaining,
+  totalDuration,
   violations,
   countByType,
   onRestart,
 }: SessionSummaryProps): React.JSX.Element {
-  // Calculate time spent
-  const timeSpent = DEFAULT_EXAM_DURATION - timeRemaining;
+  // Calculate time spent using actual configured duration
+  const timeSpent = totalDuration - timeRemaining;
   const totalViolations = violations.length;
 
   // Determine if exam was completed (timer reached 0)
@@ -56,7 +58,7 @@ export function SessionSummary({
     (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
   );
 
-  // Get violation types that have counts > 0
+  // Get violation types
   const violationTypes: ViolationType[] = ['MULTIPLE_FACES', 'TAB_SWITCH', 'PROHIBITED_APP'];
 
   return (
@@ -196,4 +198,3 @@ export function SessionSummary({
 }
 
 export default SessionSummary;
-
