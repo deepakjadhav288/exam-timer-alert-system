@@ -159,7 +159,7 @@ export const ALERT_THRESHOLDS = {
 /**
  * Default exam duration in seconds (45 minutes).
  */
-export const DEFAULT_EXAM_DURATION = 45 * 60;
+export const DEFAULT_EXAM_DURATION = 8 * 60;
 
 /**
  * Minimum time between duplicate notifications (in ms).
