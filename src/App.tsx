@@ -9,87 +9,31 @@
 
 import React from 'react';
 import { useTimer } from './hooks';
-import { formatTime } from './utils';
+import { ExamTimer } from './components';
 import './App.css';
 
 /**
  * Main application component.
- * Demonstrates the useTimer hook functionality.
+ * 
+ * Currently implements:
+ * - Task 2: useTimer hook for timer logic
+ * - Task 3: ExamTimer component with visual warnings
  */
 function App(): React.JSX.Element {
-  const {
-    timeRemaining,
-    isRunning,
-    isPaused,
-    isFinished,
-    status,
-    toggle,
-    reset,
-  } = useTimer();
+  // Initialize timer hook - state is lifted here for integration with other features
+  const timer = useTimer();
 
   return (
     <main className="app">
       <div className="app-container">
+        {/* Header */}
         <header className="app-header">
-          <h1>Exam Timer & Alert System</h1>
+          <h1 className="app-title">Exam Timer</h1>
+          <p className="app-subtitle">Online Proctoring System</p>
         </header>
 
-        {/* Timer Display - Basic implementation for Task 2 demo */}
-        <section className={`timer-section status-${status}`}>
-          <div className="timer-display">
-            <span className="timer-value" aria-live="polite">
-              {formatTime(timeRemaining)}
-            </span>
-            <span className="timer-label">
-              {isFinished 
-                ? 'Time\'s Up!' 
-                : isPaused 
-                  ? 'Paused' 
-                  : isRunning 
-                    ? 'Running' 
-                    : 'Ready'}
-            </span>
-          </div>
-
-          {/* Timer Controls */}
-          <div className="timer-controls">
-            {!isFinished ? (
-              <>
-                <button 
-                  onClick={toggle}
-                  className="btn btn-primary"
-                  aria-label={isRunning ? 'Pause timer' : 'Start timer'}
-                >
-                  {isRunning ? 'Pause' : isPaused ? 'Resume' : 'Start'}
-                </button>
-                <button 
-                  onClick={reset}
-                  className="btn btn-secondary"
-                  aria-label="Reset timer"
-                >
-                  Reset
-                </button>
-              </>
-            ) : (
-              <button 
-                onClick={reset}
-                className="btn btn-primary"
-                aria-label="Restart exam"
-              >
-                Restart
-              </button>
-            )}
-          </div>
-
-          {/* Status Indicator */}
-          <div className="status-indicator">
-            <span className={`status-badge status-badge-${status}`}>
-              {status === 'critical' && '⚠️ '}
-              {status === 'warning' && '⏰ '}
-              Status: {status.charAt(0).toUpperCase() + status.slice(1)}
-            </span>
-          </div>
-        </section>
+        {/* Timer Section */}
+        <ExamTimer timer={timer} />
       </div>
     </main>
   );

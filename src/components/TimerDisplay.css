@@ -1,0 +1,190 @@
+/**
+ * TimerDisplay Component Styles
+ * 
+ * Visual states:
+ * - Normal: Blue/neutral colors
+ * - Warning: Yellow/amber colors with gentle pulse
+ * - Critical: Red colors with attention-grabbing animation
+ */
+
+.timer-display {
+  text-align: center;
+  padding: var(--space-6);
+}
+
+/* Time Container - holds the circular progress and time */
+.timer-display__time-container {
+  position: relative;
+  display: inline-block;
+  width: 220px;
+  height: 220px;
+  margin-bottom: var(--space-4);
+}
+
+/* Timer Value */
+.timer-display__value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mono);
+  font-size: var(--text-timer);
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  transition: color var(--transition-normal);
+  z-index: 1;
+}
+
+.timer-display--warning .timer-display__value {
+  color: var(--color-warning);
+}
+
+.timer-display--critical .timer-display__value {
+  color: var(--color-critical);
+  animation: pulse-critical 1s ease-in-out infinite;
+}
+
+.timer-display__value--finished {
+  animation: none !important;
+  color: var(--color-critical);
+}
+
+/* Circular Progress */
+.timer-display__progress {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.timer-display__progress-bg {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 6;
+}
+
+.timer-display__progress-bar {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 283;
+  transition: stroke-dashoffset 1s linear, stroke var(--transition-normal);
+}
+
+.timer-display__progress-bar--warning {
+  stroke: var(--color-warning);
+}
+
+.timer-display__progress-bar--critical {
+  stroke: var(--color-critical);
+}
+
+/* Status Indicator */
+.timer-display__status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.timer-display__status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-text-muted);
+  transition: background-color var(--transition-normal);
+}
+
+.timer-display__status-dot--normal {
+  background-color: var(--color-success);
+}
+
+.timer-display__status-dot--warning {
+  background-color: var(--color-warning);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+.timer-display__status-dot--critical {
+  background-color: var(--color-critical);
+  animation: pulse-dot 0.5s ease-in-out infinite;
+}
+
+.timer-display__status-text {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
+/* Alert Messages */
+.timer-display__alert {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  margin-top: var(--space-4);
+}
+
+.timer-display__alert--warning {
+  background-color: var(--color-warning-bg);
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.timer-display__alert--critical {
+  background-color: var(--color-critical-bg);
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Animations */
+@keyframes pulse-critical {
+  0%, 100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.02);
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-4px);
+  }
+  40%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 480px) {
+  .timer-display__time-container {
+    width: 180px;
+    height: 180px;
+  }
+
+  .timer-display__value {
+    font-size: 3rem;
+  }
+}
+
