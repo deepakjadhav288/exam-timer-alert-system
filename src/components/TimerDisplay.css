@@ -15,29 +15,28 @@
 /* Time Container - holds the circular progress and time */
 .timer-display__time-container {
   position: relative;
-  display: inline-block;
-  width: 220px;
-  height: 220px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(180px, 50vw, 220px);
+  height: clamp(180px, 50vw, 220px);
   margin-bottom: var(--space-4);
 }
 
 /* Timer Value */
 .timer-display__value {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   font-family: var(--font-mono);
   font-size: var(--text-timer);
   font-weight: 700;
   color: var(--color-text);
   letter-spacing: -0.02em;
-  transition: color var(--transition-normal);
+  transition: color var(--transition-normal), transform var(--transition-normal);
   z-index: 1;
 }
 
 .timer-display--warning .timer-display__value {
-  color: var(--color-warning);
+  color: var(--color-warning-dark);
 }
 
 .timer-display--critical .timer-display__value {
@@ -52,9 +51,12 @@
 
 /* Circular Progress */
 .timer-display__progress {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   transform: rotate(-90deg);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .timer-display__progress-bg {
@@ -86,15 +88,16 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
 }
 
 .timer-display__status-dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background-color: var(--color-text-muted);
   transition: background-color var(--transition-normal);
+  flex-shrink: 0;
 }
 
 .timer-display__status-dot--normal {
@@ -112,44 +115,45 @@
 }
 
 .timer-display__status-text {
-  font-size: var(--text-sm);
+  font-size: var(--text-xs);
   color: var(--color-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 500;
+  letter-spacing: 0.12em;
+  font-weight: 600;
 }
 
 /* Alert Messages */
 .timer-display__alert {
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   font-size: var(--text-sm);
   font-weight: 500;
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
+  animation: slide-up 0.3s ease-out;
 }
 
 .timer-display__alert--warning {
   background-color: var(--color-warning-bg);
   color: #92400e;
-  border: 1px solid #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 .timer-display__alert--critical {
   background-color: var(--color-critical-bg);
   color: #991b1b;
-  border: 1px solid #fca5a5;
-  animation: shake 0.5s ease-in-out;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  animation: slide-up 0.3s ease-out, shake 0.5s ease-in-out 0.3s;
 }
 
 /* Animations */
 @keyframes pulse-critical {
   0%, 100% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
   }
   50% {
-    opacity: 0.8;
-    transform: translate(-50%, -50%) scale(1.02);
+    opacity: 0.85;
+    transform: scale(1.02);
   }
 }
 
@@ -159,32 +163,59 @@
     transform: scale(1);
   }
   50% {
-    opacity: 0.6;
-    transform: scale(1.2);
+    opacity: 0.5;
+    transform: scale(1.3);
   }
 }
 
 @keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-3px); }
+  40%, 80% { transform: translateX(3px); }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
-  20%, 60% {
-    transform: translateX(-4px);
-  }
-  40%, 80% {
-    transform: translateX(4px);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 /* Responsive Adjustments */
-@media (max-width: 480px) {
-  .timer-display__time-container {
-    width: 180px;
-    height: 180px;
+@media (max-width: 359px) {
+  .timer-display {
+    padding: var(--space-4);
   }
 
-  .timer-display__value {
-    font-size: 3rem;
+  .timer-display__time-container {
+    width: 160px;
+    height: 160px;
+  }
+
+  .timer-display__alert {
+    font-size: var(--text-xs);
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+/* Landscape mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .timer-display {
+    padding: var(--space-3);
+  }
+
+  .timer-display__time-container {
+    width: 140px;
+    height: 140px;
+    margin-bottom: var(--space-2);
+  }
+
+  .timer-display__alert {
+    margin-top: var(--space-2);
   }
 }
 

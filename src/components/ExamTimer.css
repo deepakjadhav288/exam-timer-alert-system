@@ -10,10 +10,20 @@
 
 .exam-timer__card {
   background: var(--color-bg-card);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-lg);
   overflow: hidden;
-  transition: box-shadow var(--transition-normal);
+  transition: 
+    box-shadow var(--transition-normal),
+    transform var(--transition-normal);
+}
+
+/* Hover effect on desktop */
+@media (hover: hover) {
+  .exam-timer__card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+  }
 }
 
 /* Status-based card styling */
@@ -21,14 +31,14 @@
   box-shadow: 
     var(--shadow-lg),
     0 0 0 2px var(--color-warning),
-    0 0 30px -10px var(--color-warning);
+    0 0 40px -15px var(--color-warning);
 }
 
 .exam-timer--critical .exam-timer__card {
   box-shadow: 
     var(--shadow-lg),
     0 0 0 2px var(--color-critical),
-    0 0 40px -10px var(--color-critical);
+    0 0 50px -15px var(--color-critical);
   animation: border-pulse 1s ease-in-out infinite;
 }
 
@@ -37,13 +47,19 @@
     box-shadow: 
       var(--shadow-lg),
       0 0 0 2px var(--color-critical),
-      0 0 40px -10px var(--color-critical);
+      0 0 50px -15px var(--color-critical);
   }
   50% {
     box-shadow: 
       var(--shadow-lg),
       0 0 0 3px var(--color-critical),
-      0 0 60px -5px var(--color-critical);
+      0 0 70px -10px var(--color-critical);
   }
 }
 
+/* Responsive */
+@media (max-width: 359px) {
+  .exam-timer__card {
+    border-radius: var(--radius-xl);
+  }
+}
