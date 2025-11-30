@@ -57,7 +57,7 @@ export function ViolationPanel({
       </div>
 
       <p className="violation-panel__desc">
-        Simulate proctoring violations to test the system.
+        Click <span className="violation-panel__plus-hint">+</span> to simulate a proctoring violation.
         {!isExamActive && (
           <span className="violation-panel__hint">
             {' '}Start the exam to enable.
@@ -77,17 +77,27 @@ export function ViolationPanel({
               className="violation-panel__btn"
               onClick={() => onViolation(type)}
               disabled={!isExamActive}
-              aria-label={`Simulate ${VIOLATION_LABELS[type]}`}
+              aria-label={`Add ${VIOLATION_LABELS[type]} violation`}
               style={{
                 '--violation-color': config.color,
               } as React.CSSProperties}
             >
+              {/* Plus Icon - indicates "add" action */}
+              <span className="violation-panel__btn-add" aria-hidden="true">
+                +
+              </span>
+              
+              {/* Violation Type Icon */}
               <span className="violation-panel__btn-icon">
                 {config.icon}
               </span>
+              
+              {/* Label */}
               <span className="violation-panel__btn-text">
                 {VIOLATION_LABELS[type]}
               </span>
+              
+              {/* Count Badge */}
               {count > 0 && (
                 <span className="violation-panel__btn-count">
                   {count}
@@ -102,4 +112,3 @@ export function ViolationPanel({
 }
 
 export default ViolationPanel;
-

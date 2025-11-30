@@ -38,6 +38,21 @@
   font-style: italic;
 }
 
+.violation-panel__plus-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  background: var(--color-primary);
+  border-radius: var(--radius-sm);
+  margin: 0 2px;
+  vertical-align: middle;
+}
+
 /* Violation Buttons */
 .violation-panel__buttons {
   display: flex;
@@ -80,9 +95,37 @@
   outline-offset: 2px;
 }
 
+/* Plus icon - "Add" indicator */
+.violation-panel__btn-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  background: var(--violation-color, var(--color-primary));
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.violation-panel__btn:hover:not(:disabled) .violation-panel__btn-add {
+  transform: scale(1.1);
+}
+
+.violation-panel__btn:active:not(:disabled) .violation-panel__btn-add {
+  transform: scale(0.95);
+}
+
+.violation-panel__btn:disabled .violation-panel__btn-add {
+  background: var(--color-border);
+}
+
 .violation-panel__btn-icon {
-  font-size: var(--text-xl);
-  width: 32px;
+  font-size: var(--text-lg);
+  width: 28px;
   text-align: center;
   flex-shrink: 0;
 }

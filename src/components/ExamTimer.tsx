@@ -14,6 +14,12 @@ import './ExamTimer.css';
 interface ExamTimerProps {
   /** Timer state and actions from useTimer hook */
   timer: UseTimerReturn;
+  /** Total exam duration in seconds */
+  totalDuration: number;
+  /** Warning threshold in minutes */
+  warningMinutes: number;
+  /** Critical threshold in minutes */
+  criticalMinutes: number;
 }
 
 /**
@@ -26,7 +32,12 @@ interface ExamTimerProps {
  * The timer logic is lifted to the parent component via useTimer hook,
  * allowing for integration with other features (alerts, session tracking).
  */
-export function ExamTimer({ timer }: ExamTimerProps): React.JSX.Element {
+export function ExamTimer({
+  timer,
+  totalDuration,
+  warningMinutes,
+  criticalMinutes,
+}: ExamTimerProps): React.JSX.Element {
   const {
     timeRemaining,
     isRunning,
@@ -47,6 +58,9 @@ export function ExamTimer({ timer }: ExamTimerProps): React.JSX.Element {
           isRunning={isRunning}
           isPaused={isPaused}
           isFinished={isFinished}
+          totalDuration={totalDuration}
+          warningMinutes={warningMinutes}
+          criticalMinutes={criticalMinutes}
         />
 
         {/* Timer Controls */}
@@ -63,4 +77,3 @@ export function ExamTimer({ timer }: ExamTimerProps): React.JSX.Element {
 }
 
 export default ExamTimer;
-

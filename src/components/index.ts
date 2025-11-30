@@ -13,3 +13,4 @@ export { ViolationPanel } from './ViolationPanel';
 export { ViolationBadge } from './ViolationBadge';
 export { ViolationLog } from './ViolationLog';
 export { SessionSummary } from './SessionSummary';
+export { ExamConfig } from './ExamConfig';

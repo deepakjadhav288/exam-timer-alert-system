@@ -1,8 +1,10 @@
 /**
  * AlertSettings Component
  * 
- * Provides UI controls for notification and sound alert settings.
- * Allows users to enable/disable notifications and sound alerts.
+ * Displays the alert system configuration with uniform toggle UI.
+ * - Browser Notifications: Enabled by default (disabled toggle)
+ * - Tab Title Updates: Enabled by default (disabled toggle)
+ * - Sound Alerts: User-configurable (active toggle)
  */
 
 import React from 'react';
@@ -18,23 +20,30 @@ interface AlertSettingsProps {
   onRequestPermission: () => Promise<void>;
   /** Toggle sound alerts */
   onToggleSound: () => void;
+  /** Whether the tab is currently hidden */
+  isTabHidden: boolean;
 }
 
 /**
- * Alert settings panel for configuring notifications and sounds.
+ * Alert settings panel with uniform toggle UI.
+ * Some toggles are disabled to indicate mandatory/default settings.
  */
 export function AlertSettings({
   config,
   isSupported,
   onRequestPermission,
   onToggleSound,
+  isTabHidden,
 }: AlertSettingsProps): React.JSX.Element {
+  // Browser notifications need permission first
+  const notificationsEnabled = isSupported && config.permissionGranted;
+
   return (
     <div className="alert-settings">
       <h3 className="alert-settings__title">Alert Settings</h3>
       
       <div className="alert-settings__options">
-        {/* Notification Setting */}
+        {/* Browser Notifications - Default enabled, toggle disabled */}
         <div className="alert-settings__option">
           <div className="alert-settings__option-info">
             <span className="alert-settings__option-icon">🔔</span>
@@ -43,31 +52,56 @@ export function AlertSettings({
                 Browser Notifications
               </span>
               <span className="alert-settings__option-desc">
-                Get notified at 5 min and 1 min remaining
+                {!isSupported 
+                  ? 'Not supported in this browser'
+                  : notificationsEnabled
+                    ? 'Alerts at 5 min and 1 min remaining'
+                    : 'Click toggle to grant permission'}
               </span>
             </div>
           </div>
           
-          {!isSupported ? (
-            <span className="alert-settings__status alert-settings__status--unavailable">
-              Not supported
-            </span>
-          ) : config.permissionGranted ? (
-            <span className="alert-settings__status alert-settings__status--enabled">
-              ✓ Enabled
-            </span>
-          ) : (
-            <button 
-              className="alert-settings__btn"
-              onClick={onRequestPermission}
-              aria-label="Enable notifications"
-            >
-              Enable
-            </button>
-          )}
+          <button 
+            className={`alert-settings__toggle ${notificationsEnabled ? 'alert-settings__toggle--on' : ''} ${notificationsEnabled ? 'alert-settings__toggle--disabled' : ''}`}
+            onClick={!notificationsEnabled && isSupported ? onRequestPermission : undefined}
+            role="switch"
+            aria-checked={notificationsEnabled}
+            aria-disabled={!isSupported || notificationsEnabled}
+            aria-label={`Browser notifications ${notificationsEnabled ? 'enabled (default)' : 'disabled'}`}
+            disabled={!isSupported}
+          >
+            <span className="alert-settings__toggle-thumb" />
+          </button>
         </div>
 
-        {/* Sound Setting */}
+        {/* Tab Title Update - Default enabled, toggle disabled */}
+        <div className="alert-settings__option">
+          <div className="alert-settings__option-info">
+            <span className="alert-settings__option-icon">📑</span>
+            <div className="alert-settings__option-text">
+              <span className="alert-settings__option-label">
+                Tab Title Updates
+              </span>
+              <span className="alert-settings__option-desc">
+                {isTabHidden 
+                  ? 'Currently showing time (tab inactive)' 
+                  : 'Shows time when tab is inactive'}
+              </span>
+            </div>
+          </div>
+          
+          <button 
+            className="alert-settings__toggle alert-settings__toggle--on alert-settings__toggle--disabled"
+            role="switch"
+            aria-checked={true}
+            aria-disabled={true}
+            aria-label="Tab title updates enabled (default)"
+          >
+            <span className="alert-settings__toggle-thumb" />
+          </button>
+        </div>
+
+        {/* Sound Setting - Optional toggle, user can change */}
         <div className="alert-settings__option">
           <div className="alert-settings__option-info">
             <span className="alert-settings__option-icon">🔊</span>
@@ -97,4 +131,3 @@ export function AlertSettings({
 }
 
 export default AlertSettings;
-

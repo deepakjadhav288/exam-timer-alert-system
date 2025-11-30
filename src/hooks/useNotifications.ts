@@ -2,7 +2,7 @@
  * useNotifications - Custom hook for browser notifications
  * 
  * Manages browser notification permissions and triggers notifications
- * at specific time thresholds (5 min warning, 1 min critical).
+ * at configurable time thresholds.
  * 
  * Features:
  * - Permission request handling
@@ -11,7 +11,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { AlertConfig, ALERT_THRESHOLDS, TimerStatus } from '../types';
+import { AlertConfig, TimerStatus } from '../types';
 import { isNotificationSupported, formatTime } from '../utils';
 
 interface UseNotificationsProps {
@@ -23,6 +23,10 @@ interface UseNotificationsProps {
   isRunning: boolean;
   /** Whether the timer has finished */
   isFinished: boolean;
+  /** Warning threshold in seconds */
+  warningThreshold: number;
+  /** Critical threshold in seconds */
+  criticalThreshold: number;
 }
 
 interface UseNotificationsReturn {
@@ -44,6 +48,8 @@ export function useNotifications({
   status,
   isRunning,
   isFinished,
+  warningThreshold,
+  criticalThreshold,
 }: UseNotificationsProps): UseNotificationsReturn {
   // Track notification permission and settings
   const [config, setConfig] = useState<AlertConfig>(() => ({
@@ -63,43 +69,8 @@ export function useNotifications({
 
   /**
    * Initialize audio element for sound alerts.
-   * Uses a simple beep sound generated via Web Audio API.
    */
   useEffect(() => {
-    // Create audio context for generating beep sound
-    const createBeepSound = (): string => {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      
-      oscillator.connect(gainNode);
-      oscillator.frequency.value = 800;
-      oscillator.type = 'sine';
-      
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-      
-      // Create offline context to generate audio buffer
-      const offlineContext = new OfflineAudioContext(1, 44100 * 0.5, 44100);
-      const offlineOscillator = offlineContext.createOscillator();
-      const offlineGain = offlineContext.createGain();
-      
-      offlineOscillator.connect(offlineGain);
-      offlineGain.connect(offlineContext.destination);
-      
-      offlineOscillator.frequency.value = 800;
-      offlineOscillator.type = 'sine';
-      offlineGain.gain.setValueAtTime(0.3, 0);
-      offlineGain.gain.exponentialRampToValueAtTime(0.01, 0.5);
-      
-      offlineOscillator.start(0);
-      offlineOscillator.stop(0.5);
-      
-      return '';
-    };
-
-    // For simplicity, we'll use a data URL for a beep sound
-    // In production, you'd use an actual audio file
     audioRef.current = new Audio();
     audioRef.current.volume = 0.5;
 
@@ -177,11 +148,10 @@ export function useNotifications({
         body,
         icon: '/favicon.ico',
         badge: '/favicon.ico',
-        tag: 'exam-timer-alert', // Prevents duplicate notifications
+        tag: 'exam-timer-alert',
         requireInteraction: false,
       });
 
-      // Auto-close after 5 seconds
       setTimeout(() => notification.close(), 5000);
     } catch (error) {
       console.warn('Could not show notification:', error);
@@ -194,27 +164,29 @@ export function useNotifications({
   useEffect(() => {
     if (!isRunning || isFinished) return;
 
-    // Warning alert at 5 minutes
+    // Warning alert
     if (
-      timeRemaining === ALERT_THRESHOLDS.WARNING &&
+      timeRemaining === warningThreshold &&
       !alertsShownRef.current.has('warning')
     ) {
       alertsShownRef.current.add('warning');
+      const mins = Math.floor(warningThreshold / 60);
       showNotification(
-        '⏰ 5 Minutes Remaining',
-        'You have 5 minutes left to complete your exam.'
+        `⏰ ${mins} Minute${mins > 1 ? 's' : ''} Remaining`,
+        `You have ${mins} minute${mins > 1 ? 's' : ''} left to complete your exam.`
       );
     }
 
-    // Critical alert at 1 minute
+    // Critical alert
     if (
-      timeRemaining === ALERT_THRESHOLDS.CRITICAL &&
+      timeRemaining === criticalThreshold &&
       !alertsShownRef.current.has('critical')
     ) {
       alertsShownRef.current.add('critical');
+      const mins = Math.floor(criticalThreshold / 60);
       showNotification(
-        '⚠️ 1 Minute Remaining!',
-        'Only 1 minute left! Please submit your exam soon.'
+        `⚠️ ${mins} Minute${mins > 1 ? 's' : ''} Remaining!`,
+        `Only ${mins} minute${mins > 1 ? 's' : ''} left! Please submit your exam soon.`
       );
       playAlertSound();
     }
@@ -223,21 +195,21 @@ export function useNotifications({
     if (timeRemaining === 0 && !alertsShownRef.current.has('finished')) {
       alertsShownRef.current.add('finished');
       showNotification(
-        '🔔 Time\'s Up!',
+        "🔔 Time's Up!",
         'Your exam time has ended.'
       );
       playAlertSound();
     }
-  }, [timeRemaining, isRunning, isFinished, showNotification, playAlertSound]);
+  }, [timeRemaining, isRunning, isFinished, warningThreshold, criticalThreshold, showNotification, playAlertSound]);
 
   /**
    * Reset alerts when timer is reset.
    */
   useEffect(() => {
-    if (!isRunning && !isFinished && timeRemaining > ALERT_THRESHOLDS.WARNING) {
+    if (!isRunning && !isFinished && timeRemaining > warningThreshold) {
       alertsShownRef.current.clear();
     }
-  }, [timeRemaining, isRunning, isFinished]);
+  }, [timeRemaining, isRunning, isFinished, warningThreshold]);
 
   return {
     config,
@@ -248,4 +220,3 @@ export function useNotifications({
 }
 
 export default useNotifications;
-

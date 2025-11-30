@@ -21,6 +21,12 @@ interface TimerDisplayProps {
   isPaused: boolean;
   /** Whether the timer has finished */
   isFinished: boolean;
+  /** Total exam duration in seconds (for progress calculation) */
+  totalDuration: number;
+  /** Warning threshold in minutes (for alert message) */
+  warningMinutes: number;
+  /** Critical threshold in minutes (for alert message) */
+  criticalMinutes: number;
 }
 
 /**
@@ -38,6 +44,9 @@ export function TimerDisplay({
   isRunning,
   isPaused,
   isFinished,
+  totalDuration,
+  warningMinutes,
+  criticalMinutes,
 }: TimerDisplayProps): React.JSX.Element {
   // Determine the status message to display
   const getStatusMessage = (): string => {
@@ -45,6 +54,11 @@ export function TimerDisplay({
     if (isPaused) return 'Paused';
     if (isRunning) return 'Exam in Progress';
     return 'Ready to Start';
+  };
+
+  // Format threshold for display (handle singular/plural)
+  const formatThreshold = (minutes: number): string => {
+    return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
   };
 
   return (
@@ -81,8 +95,8 @@ export function TimerDisplay({
             cy="50"
             r="45"
             style={{
-              // Calculate stroke offset based on time remaining (45 min = 2700s)
-              strokeDashoffset: 283 - (283 * timeRemaining) / 2700,
+              // Calculate stroke offset based on time remaining and total duration
+              strokeDashoffset: 283 - (283 * timeRemaining) / totalDuration,
             }}
           />
         </svg>
@@ -99,13 +113,13 @@ export function TimerDisplay({
       {/* Warning Messages */}
       {status === 'warning' && !isFinished && (
         <div className="timer-display__alert timer-display__alert--warning" role="alert">
-          ⏰ Less than 5 minutes remaining
+          ⏰ Less than {formatThreshold(warningMinutes)} remaining
         </div>
       )}
       
       {status === 'critical' && !isFinished && (
         <div className="timer-display__alert timer-display__alert--critical" role="alert">
-          ⚠️ Final minute! Submit your exam soon.
+          ⚠️ {criticalMinutes === 1 ? 'Final minute!' : `Less than ${formatThreshold(criticalMinutes)}!`} Submit your exam soon.
         </div>
       )}
     </div>
@@ -113,4 +127,3 @@ export function TimerDisplay({
 }
 
 export default TimerDisplay;
-
