@@ -1,0 +1,80 @@
+/**
+ * ViolationBadge Component Styles
+ */
+
+.violation-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+/* Sizes */
+.violation-badge--small {
+  font-size: var(--text-xs);
+  padding: 2px var(--space-2);
+}
+
+.violation-badge--medium {
+  font-size: var(--text-xs);
+}
+
+.violation-badge--large {
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-3);
+}
+
+/* Empty State */
+.violation-badge--empty {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.violation-badge--empty .violation-badge__icon,
+.violation-badge--empty .violation-badge__count {
+  display: none;
+}
+
+/* Severity Levels */
+.violation-badge--low {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.violation-badge--medium {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+.violation-badge--high {
+  background: #fee2e2;
+  color: #991b1b;
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+/* Badge Parts */
+.violation-badge__icon {
+  font-size: 0.9em;
+}
+
+.violation-badge__count {
+  font-weight: 700;
+}
+
+.violation-badge__label {
+  opacity: 0.9;
+}
+
+/* Animation */
+@keyframes badge-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
