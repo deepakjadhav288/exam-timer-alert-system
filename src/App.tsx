@@ -83,6 +83,9 @@ function App(): React.JSX.Element {
   // Total duration in seconds (for progress bar)
   const totalDurationSeconds = examConfig.duration * 60;
 
+  // Check if exam can be started (notifications must be enabled)
+  const canStartExam = notifications.isSupported && notifications.config.permissionGranted;
+
   // -------------------------------------------------------------------------
   // Handlers
   // -------------------------------------------------------------------------
@@ -183,6 +186,7 @@ function App(): React.JSX.Element {
           totalDuration={totalDurationSeconds}
           warningMinutes={examConfig.warningAt}
           criticalMinutes={examConfig.criticalAt}
+          canStart={canStartExam}
         />
 
         {/* Violation Panel - Simulation Buttons */}

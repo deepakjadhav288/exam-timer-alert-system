@@ -12,7 +12,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { AlertConfig, TimerStatus } from '../types';
-import { isNotificationSupported, formatTime } from '../utils';
+import { isNotificationSupported } from '../utils';
 
 interface UseNotificationsProps {
   /** Current remaining time in seconds */
@@ -51,36 +51,29 @@ export function useNotifications({
   warningThreshold,
   criticalThreshold,
 }: UseNotificationsProps): UseNotificationsReturn {
+  // Check if notifications are supported
+  const isSupported = isNotificationSupported();
+
+  // Get initial permission status
+  const getInitialPermission = (): boolean => {
+    return isSupported && Notification.permission === 'granted';
+  };
+
   // Track notification permission and settings
-  const [config, setConfig] = useState<AlertConfig>(() => ({
-    notificationsEnabled: false,
-    soundEnabled: true,
-    permissionGranted: isNotificationSupported() && Notification.permission === 'granted',
-  }));
+  const [config, setConfig] = useState<AlertConfig>(() => {
+    const granted = getInitialPermission();
+    return {
+      notificationsEnabled: granted, // Enable if already granted
+      soundEnabled: true,
+      permissionGranted: granted,
+    };
+  });
 
   // Track which alerts have been shown (to prevent duplicates)
   const alertsShownRef = useRef<Set<string>>(new Set());
   
-  // Audio reference for sound alerts
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // Check if notifications are supported
-  const isSupported = isNotificationSupported();
-
-  /**
-   * Initialize audio element for sound alerts.
-   */
-  useEffect(() => {
-    audioRef.current = new Audio();
-    audioRef.current.volume = 0.5;
-
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, []);
+  // Track previous time to detect threshold crossings
+  const prevTimeRef = useRef<number>(timeRemaining);
 
   /**
    * Play alert sound using Web Audio API.
@@ -117,11 +110,20 @@ export function useNotifications({
 
     try {
       const permission = await Notification.requestPermission();
+      const granted = permission === 'granted';
       setConfig(prev => ({
         ...prev,
-        permissionGranted: permission === 'granted',
-        notificationsEnabled: permission === 'granted',
+        permissionGranted: granted,
+        notificationsEnabled: granted,
       }));
+      
+      // Show a test notification if granted
+      if (granted) {
+        new Notification('✅ Notifications Enabled', {
+          body: 'You will receive alerts at warning and critical times.',
+          icon: '/favicon.ico',
+        });
+      }
     } catch (error) {
       console.warn('Could not request notification permission:', error);
     }
@@ -141,14 +143,17 @@ export function useNotifications({
    * Show a browser notification.
    */
   const showNotification = useCallback((title: string, body: string) => {
-    if (!config.permissionGranted || !config.notificationsEnabled) return;
+    if (!config.permissionGranted) {
+      console.warn('Notification permission not granted');
+      return;
+    }
 
     try {
       const notification = new Notification(title, {
         body,
         icon: '/favicon.ico',
         badge: '/favicon.ico',
-        tag: 'exam-timer-alert',
+        tag: `exam-timer-${Date.now()}`, // Unique tag to allow multiple notifications
         requireInteraction: false,
       });
 
@@ -156,17 +161,24 @@ export function useNotifications({
     } catch (error) {
       console.warn('Could not show notification:', error);
     }
-  }, [config.permissionGranted, config.notificationsEnabled]);
+  }, [config.permissionGranted]);
 
   /**
    * Effect to trigger alerts at specific thresholds.
+   * Uses threshold crossing detection for more reliable triggering.
    */
   useEffect(() => {
-    if (!isRunning || isFinished) return;
+    if (!isRunning || isFinished) {
+      prevTimeRef.current = timeRemaining;
+      return;
+    }
 
-    // Warning alert
+    const prevTime = prevTimeRef.current;
+    
+    // Check for warning threshold crossing (went from above to at/below)
     if (
-      timeRemaining === warningThreshold &&
+      prevTime > warningThreshold &&
+      timeRemaining <= warningThreshold &&
       !alertsShownRef.current.has('warning')
     ) {
       alertsShownRef.current.add('warning');
@@ -177,22 +189,29 @@ export function useNotifications({
       );
     }
 
-    // Critical alert
+    // Check for critical threshold crossing
     if (
-      timeRemaining === criticalThreshold &&
+      prevTime > criticalThreshold &&
+      timeRemaining <= criticalThreshold &&
       !alertsShownRef.current.has('critical')
     ) {
       alertsShownRef.current.add('critical');
       const mins = Math.floor(criticalThreshold / 60);
+      const secs = criticalThreshold % 60;
+      const timeStr = mins > 0 ? `${mins} minute${mins > 1 ? 's' : ''}` : `${secs} seconds`;
       showNotification(
-        `⚠️ ${mins} Minute${mins > 1 ? 's' : ''} Remaining!`,
-        `Only ${mins} minute${mins > 1 ? 's' : ''} left! Please submit your exam soon.`
+        `⚠️ ${timeStr} Remaining!`,
+        `Only ${timeStr} left! Please submit your exam soon.`
       );
       playAlertSound();
     }
 
     // Timer finished
-    if (timeRemaining === 0 && !alertsShownRef.current.has('finished')) {
+    if (
+      prevTime > 0 &&
+      timeRemaining === 0 &&
+      !alertsShownRef.current.has('finished')
+    ) {
       alertsShownRef.current.add('finished');
       showNotification(
         "🔔 Time's Up!",
@@ -200,6 +219,9 @@ export function useNotifications({
       );
       playAlertSound();
     }
+
+    // Update previous time
+    prevTimeRef.current = timeRemaining;
   }, [timeRemaining, isRunning, isFinished, warningThreshold, criticalThreshold, showNotification, playAlertSound]);
 
   /**
@@ -208,8 +230,35 @@ export function useNotifications({
   useEffect(() => {
     if (!isRunning && !isFinished && timeRemaining > warningThreshold) {
       alertsShownRef.current.clear();
+      prevTimeRef.current = timeRemaining;
     }
   }, [timeRemaining, isRunning, isFinished, warningThreshold]);
+
+  /**
+   * Sync permission status on mount and when tab becomes visible.
+   */
+  useEffect(() => {
+    const checkPermission = () => {
+      const granted = getInitialPermission();
+      setConfig(prev => {
+        if (prev.permissionGranted !== granted) {
+          return {
+            ...prev,
+            permissionGranted: granted,
+            notificationsEnabled: granted,
+          };
+        }
+        return prev;
+      });
+    };
+
+    // Check on visibility change (user might have changed permission in browser settings)
+    document.addEventListener('visibilitychange', checkPermission);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', checkPermission);
+    };
+  }, []);
 
   return {
     config,

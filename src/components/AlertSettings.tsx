@@ -1,10 +1,10 @@
 /**
  * AlertSettings Component
  * 
- * Displays the alert system configuration with uniform toggle UI.
- * - Browser Notifications: Enabled by default (disabled toggle)
- * - Tab Title Updates: Enabled by default (disabled toggle)
- * - Sound Alerts: User-configurable (active toggle)
+ * Displays the alert system configuration.
+ * - Browser Notifications: Mandatory (always enabled, requires permission)
+ * - Tab Title Updates: Auto-enabled (always on)
+ * - Sound Alerts: Optional (user can toggle)
  */
 
 import React from 'react';
@@ -25,8 +25,7 @@ interface AlertSettingsProps {
 }
 
 /**
- * Alert settings panel with uniform toggle UI.
- * Some toggles are disabled to indicate mandatory/default settings.
+ * Alert settings panel.
  */
 export function AlertSettings({
   config,
@@ -35,52 +34,66 @@ export function AlertSettings({
   onToggleSound,
   isTabHidden,
 }: AlertSettingsProps): React.JSX.Element {
-  // Browser notifications need permission first
-  const notificationsEnabled = isSupported && config.permissionGranted;
+  // Check if permission needs to be granted
+  const needsPermission = isSupported && !config.permissionGranted;
 
   return (
     <div className="alert-settings">
       <h3 className="alert-settings__title">Alert Settings</h3>
       
       <div className="alert-settings__options">
-        {/* Browser Notifications - Default enabled, toggle disabled */}
-        <div className="alert-settings__option">
+        {/* Browser Notifications - Mandatory (always ON) */}
+        <div className={`alert-settings__option ${needsPermission ? 'alert-settings__option--needs-permission' : ''}`}>
           <div className="alert-settings__option-info">
             <span className="alert-settings__option-icon">🔔</span>
             <div className="alert-settings__option-text">
               <span className="alert-settings__option-label">
                 Browser Notifications
+                <span className="alert-settings__mandatory-badge">Mandatory</span>
               </span>
               <span className="alert-settings__option-desc">
                 {!isSupported 
                   ? 'Not supported in this browser'
-                  : notificationsEnabled
-                    ? 'Alerts at 5 min and 1 min remaining'
-                    : 'Click toggle to grant permission'}
+                  : config.permissionGranted
+                    ? 'Alerts at warning and critical time'
+                    : 'Permission required to start exam'}
               </span>
             </div>
           </div>
           
-          <button 
-            className={`alert-settings__toggle ${notificationsEnabled ? 'alert-settings__toggle--on' : ''} ${notificationsEnabled ? 'alert-settings__toggle--disabled' : ''}`}
-            onClick={!notificationsEnabled && isSupported ? onRequestPermission : undefined}
-            role="switch"
-            aria-checked={notificationsEnabled}
-            aria-disabled={!isSupported || notificationsEnabled}
-            aria-label={`Browser notifications ${notificationsEnabled ? 'enabled (default)' : 'disabled'}`}
-            disabled={!isSupported}
-          >
-            <span className="alert-settings__toggle-thumb" />
-          </button>
+          <div className="alert-settings__option-actions">
+            {/* Grant Permission button when needed */}
+            {needsPermission && (
+              <button 
+                className="alert-settings__permission-btn"
+                onClick={onRequestPermission}
+                type="button"
+              >
+                Grant Permission
+              </button>
+            )}
+            
+            {/* Toggle - always ON, always disabled (mandatory setting) */}
+            <button 
+              className="alert-settings__toggle alert-settings__toggle--on alert-settings__toggle--disabled"
+              role="switch"
+              aria-checked={true}
+              aria-disabled={true}
+              type="button"
+            >
+              <span className="alert-settings__toggle-thumb" />
+            </button>
+          </div>
         </div>
 
-        {/* Tab Title Update - Default enabled, toggle disabled */}
+        {/* Tab Title Update - Auto-enabled */}
         <div className="alert-settings__option">
           <div className="alert-settings__option-info">
             <span className="alert-settings__option-icon">📑</span>
             <div className="alert-settings__option-text">
               <span className="alert-settings__option-label">
                 Tab Title Updates
+                <span className="alert-settings__auto-badge">Auto</span>
               </span>
               <span className="alert-settings__option-desc">
                 {isTabHidden 
@@ -95,22 +108,23 @@ export function AlertSettings({
             role="switch"
             aria-checked={true}
             aria-disabled={true}
-            aria-label="Tab title updates enabled (default)"
+            type="button"
           >
             <span className="alert-settings__toggle-thumb" />
           </button>
         </div>
 
-        {/* Sound Setting - Optional toggle, user can change */}
+        {/* Sound Setting - Optional */}
         <div className="alert-settings__option">
           <div className="alert-settings__option-info">
             <span className="alert-settings__option-icon">🔊</span>
             <div className="alert-settings__option-text">
               <span className="alert-settings__option-label">
                 Sound Alerts
+                <span className="alert-settings__optional-badge">Optional</span>
               </span>
               <span className="alert-settings__option-desc">
-                Play sound at 1 minute remaining
+                Play sound at critical time
               </span>
             </div>
           </div>
@@ -120,7 +134,7 @@ export function AlertSettings({
             onClick={onToggleSound}
             role="switch"
             aria-checked={config.soundEnabled}
-            aria-label={`Sound alerts ${config.soundEnabled ? 'enabled' : 'disabled'}`}
+            type="button"
           >
             <span className="alert-settings__toggle-thumb" />
           </button>

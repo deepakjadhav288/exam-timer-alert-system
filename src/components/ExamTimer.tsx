@@ -20,6 +20,8 @@ interface ExamTimerProps {
   warningMinutes: number;
   /** Critical threshold in minutes */
   criticalMinutes: number;
+  /** Whether the exam can be started (notifications enabled) */
+  canStart: boolean;
 }
 
 /**
@@ -37,6 +39,7 @@ export function ExamTimer({
   totalDuration,
   warningMinutes,
   criticalMinutes,
+  canStart,
 }: ExamTimerProps): React.JSX.Element {
   const {
     timeRemaining,
@@ -68,6 +71,7 @@ export function ExamTimer({
           isRunning={isRunning}
           isPaused={isPaused}
           isFinished={isFinished}
+          canStart={canStart}
           onToggle={toggle}
           onReset={reset}
         />

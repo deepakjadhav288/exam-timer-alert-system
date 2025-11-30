@@ -15,6 +15,8 @@ interface TimerControlsProps {
   isPaused: boolean;
   /** Whether the timer has finished */
   isFinished: boolean;
+  /** Whether the exam can be started (notifications enabled) */
+  canStart: boolean;
   /** Toggle between pause and resume */
   onToggle: () => void;
   /** Reset the timer to initial state */
@@ -25,7 +27,7 @@ interface TimerControlsProps {
  * Control buttons for the exam timer.
  * 
  * States:
- * - Initial: Shows "Start Exam" button
+ * - Initial: Shows "Start Exam" button (disabled if notifications not enabled)
  * - Running: Shows "Pause" and "Reset" buttons
  * - Paused: Shows "Resume" and "Reset" buttons
  * - Finished: Shows "Restart Exam" button
@@ -34,9 +36,13 @@ export function TimerControls({
   isRunning,
   isPaused,
   isFinished,
+  canStart,
   onToggle,
   onReset,
 }: TimerControlsProps): React.JSX.Element {
+  // Determine if this is the initial state (not started yet)
+  const isInitialState = !isRunning && !isPaused && !isFinished;
+
   // Determine primary button text based on state
   const getPrimaryButtonText = (): string => {
     if (isFinished) return 'Restart Exam';
@@ -52,15 +58,26 @@ export function TimerControls({
     return '▶️';
   };
 
+  // Check if start button should be disabled
+  const isStartDisabled = isInitialState && !canStart;
+
   return (
     <div className="timer-controls">
+      {/* Warning message when notifications not enabled */}
+      {isStartDisabled && (
+        <div className="timer-controls__warning" role="alert">
+          ⚠️ Enable Browser Notifications to start the exam
+        </div>
+      )}
+
       {/* Primary Action Button */}
       <button
         className={`timer-controls__btn timer-controls__btn--primary ${
           isFinished ? 'timer-controls__btn--restart' : ''
-        }`}
+        } ${isStartDisabled ? 'timer-controls__btn--disabled' : ''}`}
         onClick={isFinished ? onReset : onToggle}
         aria-label={getPrimaryButtonText()}
+        disabled={isStartDisabled}
       >
         <span className="timer-controls__btn-icon" aria-hidden="true">
           {getPrimaryButtonIcon()}
@@ -90,4 +107,3 @@ export function TimerControls({
 }
 
 export default TimerControls;
-

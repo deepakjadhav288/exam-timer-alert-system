@@ -4,10 +4,36 @@
 
 .timer-controls {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-4) var(--space-5);
+}
+
+.timer-controls__buttons {
+  display: flex;
   gap: var(--space-3);
   justify-content: center;
   flex-wrap: wrap;
-  padding: 0 var(--space-4) var(--space-5);
+}
+
+/* Warning message */
+.timer-controls__warning {
+  font-size: var(--text-sm);
+  color: #dc2626;
+  background: #fef2f2;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid #fecaca;
+  text-align: center;
+  width: 100%;
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
 
 /* Button Base */
@@ -54,6 +80,17 @@
 .timer-controls__btn:active {
   transform: translateY(0);
   box-shadow: none;
+}
+
+/* Disabled state */
+.timer-controls__btn--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.timer-controls__btn--disabled:hover {
+  transform: none;
+  box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.35);
 }
 
 .timer-controls__btn:focus-visible {
