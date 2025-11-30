@@ -5,22 +5,29 @@
  * - Countdown timer with visual warnings
  * - Browser notifications and sound alerts
  * - Violation detection and logging
- * - Session summary upon completion (coming in Task 6)
+ * - Session summary upon completion
  */
 
 import React from 'react';
 import { useTimer, useNotifications, useTabTitle, useViolations } from './hooks';
-import { ExamTimer, AlertSettings, ViolationPanel, ViolationLog } from './components';
+import {
+  ExamTimer,
+  AlertSettings,
+  ViolationPanel,
+  ViolationLog,
+  SessionSummary,
+} from './components';
 import './App.css';
 
 /**
  * Main application component.
  * 
- * Currently implements:
+ * Implements all core requirements:
  * - Task 2: useTimer hook for timer logic
  * - Task 3: ExamTimer component with visual warnings
  * - Task 4: Alert system with notifications, sound, and tab title
  * - Task 5: Violation detection and logging system
+ * - Task 6: Session summary screen when timer ends
  */
 function App(): React.JSX.Element {
   // Initialize timer hook - state is lifted here for integration with other features
@@ -48,11 +55,35 @@ function App(): React.JSX.Element {
   const isExamActive = timer.isRunning || timer.isPaused;
 
   // Handle timer reset - also clear violations
-  const handleReset = () => {
+  const handleRestart = () => {
     timer.reset();
     violations.clearViolations();
   };
 
+  // Show session summary when timer is finished
+  if (timer.isFinished) {
+    return (
+      <main className="app">
+        <div className="app-container">
+          {/* Header */}
+          <header className="app-header">
+            <h1 className="app-title">Exam Timer</h1>
+            <p className="app-subtitle">Online Proctoring System</p>
+          </header>
+
+          {/* Session Summary */}
+          <SessionSummary
+            timeRemaining={timer.timeRemaining}
+            violations={violations.violations}
+            countByType={violations.countByType}
+            onRestart={handleRestart}
+          />
+        </div>
+      </main>
+    );
+  }
+
+  // Show main exam interface
   return (
     <main className="app">
       <div className="app-container">
@@ -66,7 +97,7 @@ function App(): React.JSX.Element {
         <ExamTimer 
           timer={{
             ...timer,
-            reset: handleReset, // Override reset to also clear violations
+            reset: handleRestart, // Override reset to also clear violations
           }} 
         />
 
