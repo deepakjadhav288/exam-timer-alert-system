@@ -6,8 +6,8 @@
  */
 
 import React from 'react';
-import { Violation, ViolationType, VIOLATION_LABELS } from '../types';
-import { formatTimestamp } from '../utils';
+import { Violation, ViolationType, VIOLATION_LABELS } from '../../types';
+import { formatTimestamp } from '../../utils';
 import './ViolationLog.css';
 
 interface ViolationLogProps {

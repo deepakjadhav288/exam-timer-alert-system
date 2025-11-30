@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { ViolationType, VIOLATION_LABELS } from '../types';
+import { ViolationType, VIOLATION_LABELS } from '../../types';
 import { ViolationBadge } from './ViolationBadge';
 import './ViolationPanel.css';
 

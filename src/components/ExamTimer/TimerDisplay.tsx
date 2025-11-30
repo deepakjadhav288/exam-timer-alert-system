@@ -6,8 +6,8 @@
  */
 
 import React from 'react';
-import { TimerStatus } from '../types';
-import { formatTime } from '../utils';
+import { TimerStatus } from '../../types';
+import { formatTime } from '../../utils';
 import './TimerDisplay.css';
 
 interface TimerDisplayProps {

@@ -1,0 +1,2 @@
+export { ExamConfig } from './ExamConfig';
+

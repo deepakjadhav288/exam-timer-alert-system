@@ -1,16 +1,21 @@
 /**
- * Components barrel export file.
- * All components are exported from here for clean imports.
+ * Components barrel export
  * 
- * Usage: import { ExamTimer, SessionSummary } from './components';
+ * Re-exports all components for cleaner imports:
+ * import { ExamTimer, ViolationPanel } from './components';
  */
 
-export { ExamTimer } from './ExamTimer';
-export { TimerDisplay } from './TimerDisplay';
-export { TimerControls } from './TimerControls';
+// Alert Settings
 export { AlertSettings } from './AlertSettings';
-export { ViolationPanel } from './ViolationPanel';
-export { ViolationBadge } from './ViolationBadge';
-export { ViolationLog } from './ViolationLog';
-export { SessionSummary } from './SessionSummary';
+
+// Exam Configuration
 export { ExamConfig } from './ExamConfig';
+
+// Timer Components
+export { ExamTimer, TimerDisplay, TimerControls } from './ExamTimer';
+
+// Session Summary
+export { SessionSummary } from './SessionSummary';
+
+// Violation Components
+export { ViolationPanel, ViolationBadge, ViolationLog } from './ViolationPanel';

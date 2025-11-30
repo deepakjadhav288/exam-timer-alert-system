@@ -8,7 +8,7 @@
 import React from 'react';
 import { TimerDisplay } from './TimerDisplay';
 import { TimerControls } from './TimerControls';
-import { UseTimerReturn } from '../types';
+import { UseTimerReturn } from '../../types';
 import './ExamTimer.css';
 
 interface ExamTimerProps {

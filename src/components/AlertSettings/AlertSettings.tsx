@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import { AlertConfig } from '../types';
+import { AlertConfig } from '../../types';
 import './AlertSettings.css';
 
 interface AlertSettingsProps {

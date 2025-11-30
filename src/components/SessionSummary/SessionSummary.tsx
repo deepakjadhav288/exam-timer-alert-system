@@ -10,8 +10,8 @@ import {
   Violation,
   ViolationType,
   VIOLATION_LABELS,
-} from '../types';
-import { formatTime, formatTimestamp } from '../utils';
+} from '../../types';
+import { formatTime, formatTimestamp } from '../../utils';
 import './SessionSummary.css';
 
 interface SessionSummaryProps {
