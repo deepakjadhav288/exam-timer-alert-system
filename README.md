@@ -1,46 +1,223 @@
-# Getting Started with Create React App
+# Exam Timer & Alert System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based exam timer component with proctoring violation detection simulation, built as a take-home coding challenge.
 
-## Available Scripts
+![React](https://img.shields.io/badge/React-19.2.0-61DAFB?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-4.4.2-3178C6?logo=typescript)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-In the project directory, you can run:
+## 🎯 Features
 
-### `yarn start`
+### ⏱️ Countdown Timer
+- 45-minute countdown in MM:SS format
+- Pause/Resume functionality
+- Visual warning at 5 minutes (yellow)
+- Critical alert at 1 minute (red)
+- Circular progress indicator
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### 🔔 Alert System
+- Browser notifications at 5 min and 1 min
+- Sound alert at 1 minute (toggleable)
+- Dynamic tab title shows remaining time
+- Permission request handling
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### 🚨 Violation Detection Simulation
+- Three violation types:
+  - Multiple Faces Detected
+  - Tab Switch Detected
+  - Prohibited Application Detected
+- Timestamped violation log
+- Violation count badges with severity styling
 
-### `yarn test`
+### 📊 Session Summary
+- Displayed when timer ends
+- Total time spent
+- Violations grouped by type
+- Chronological violation timeline
+- Clean record celebration for no violations
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🚀 Getting Started
 
-### `yarn build`
+### Prerequisites
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Node.js 18+ 
+- Yarn or npm
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Installation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/exam-timer-alert-system.git
+cd exam-timer-alert-system
 
-### `yarn eject`
+# Install dependencies
+yarn install
+# or
+npm install
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Running the Application
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+# Start development server
+yarn start
+# or
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+The application will open at [http://localhost:3000](http://localhost:3000)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Building for Production
 
-## Learn More
+```bash
+yarn build
+# or
+npm run build
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Running Tests
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+yarn test
+# or
+npm test
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── ExamTimer.tsx   # Main timer container
+│   ├── TimerDisplay.tsx # Countdown display
+│   ├── TimerControls.tsx # Control buttons
+│   ├── AlertSettings.tsx # Notification settings
+│   ├── ViolationPanel.tsx # Violation buttons
+│   ├── ViolationBadge.tsx # Count badge
+│   ├── ViolationLog.tsx  # Timeline log
+│   ├── SessionSummary.tsx # End summary
+│   └── index.ts         # Barrel exports
+├── hooks/               # Custom React hooks
+│   ├── useTimer.ts     # Timer logic
+│   ├── useNotifications.ts # Browser notifications
+│   ├── useTabTitle.ts  # Tab title updates
+│   ├── useViolations.ts # Violation state
+│   └── index.ts        # Barrel exports
+├── types/               # TypeScript definitions
+│   └── index.ts        # All interfaces & types
+├── utils/               # Utility functions
+│   └── index.ts        # Helper functions
+├── App.tsx              # Root component
+├── App.css              # App styles
+├── index.tsx            # Entry point
+└── index.css            # Global styles & CSS variables
+```
+
+## 🏗️ Architecture & Design Decisions
+
+### Component Architecture
+
+**Composition over Inheritance**: Components are composed of smaller, focused pieces:
+- `ExamTimer` composes `TimerDisplay` + `TimerControls`
+- State is lifted to `App.tsx` for cross-component integration
+
+**Custom Hooks Pattern**: Business logic is extracted into reusable hooks:
+- `useTimer` - All timer logic with interval management
+- `useNotifications` - Browser notification handling
+- `useViolations` - Violation state management
+- `useTabTitle` - Document title updates
+
+### State Management
+
+**Local State with Hooks**: Chose `useState` + custom hooks over Redux/Context for:
+- Simplicity - app scope doesn't require global state
+- Performance - no unnecessary re-renders
+- Testability - hooks are easily unit tested
+
+**Refs for Mutable Values**: Used `useRef` for:
+- Interval IDs (avoid stale closures)
+- Alert tracking (prevent duplicate notifications)
+- Mounted state (prevent memory leaks)
+
+### TypeScript Strategy
+
+- **Strict typing** for all props, state, and return values
+- **Union types** for violation types (`ViolationType`)
+- **Interface segregation** - separate interfaces for state vs actions
+- **Constants as const** - `ALERT_THRESHOLDS`, `VIOLATION_LABELS`
+
+### Styling Approach
+
+**CSS Modules Alternative**: Chose BEM-style CSS with:
+- CSS custom properties for theming
+- Component-scoped CSS files
+- No runtime overhead (vs CSS-in-JS)
+
+**Mobile-First Responsive**: 
+- Base styles for mobile
+- Progressive enhancement for larger screens
+- Landscape mobile breakpoint for edge cases
+
+## ⚖️ Trade-offs
+
+| Decision | Benefit | Trade-off |
+|----------|---------|-----------|
+| No state library | Simpler, fewer dependencies | Would need refactor for complex state |
+| CSS files over CSS-in-JS | Zero runtime cost, familiar | No dynamic styling, potential conflicts |
+| Web Audio API for sound | No audio file needed | Browser compatibility varies |
+| Single component file | Co-located logic | Larger files for complex components |
+
+## 🔮 Future Improvements
+
+With more time, I would add:
+
+### Features
+- [ ] **Persist session to localStorage** - Resume after browser close
+- [ ] **Custom timer duration** - User-configurable exam length
+- [ ] **Multiple exam profiles** - Save/load different configurations
+- [ ] **Export session report** - PDF/JSON export of results
+- [ ] **Real violation detection** - Webcam face detection, tab visibility API
+
+### Technical
+- [ ] **Unit tests** - Jest tests for hooks and components
+- [ ] **E2E tests** - Playwright/Cypress for full flows
+- [ ] **Dark mode** - CSS variables are ready, need toggle
+- [ ] **i18n** - Multi-language support
+- [ ] **PWA** - Offline support, install prompt
+- [ ] **Performance** - React.memo for heavy components
+
+### UX
+- [ ] **Keyboard shortcuts** - Space for pause, R for reset
+- [ ] **Better sounds** - Multiple alert tones, volume control
+- [ ] **Animations** - Page transitions with Framer Motion
+- [ ] **Accessibility audit** - WCAG 2.1 AA compliance
+
+## ⏱️ Time Spent
+
+| Task | Time |
+|------|------|
+| Project setup & TypeScript types | ~30 min |
+| Timer hook implementation | ~45 min |
+| Timer display components | ~45 min |
+| Alert system & Browser APIs | ~40 min |
+| Violation detection system | ~40 min |
+| Session summary screen | ~30 min |
+| Responsive design & polish | ~45 min |
+| Documentation | ~20 min |
+| **Total** | **~5 hours** |
+
+## 🛠️ Technologies Used
+
+- **React 19.2** - UI framework
+- **TypeScript 4.4** - Type safety
+- **Create React App** - Build tooling
+- **CSS Custom Properties** - Theming
+- **Web APIs** - Notifications, Audio, Visibility
+
+## 📄 License
+
+MIT License - feel free to use this code for your own projects.
+
+---
+
+Built with ❤️ as a coding challenge submission.
