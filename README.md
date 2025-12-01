@@ -222,8 +222,6 @@ Features added beyond the core requirements:
 
 - **Configurable Timer Settings** - User can set custom exam duration, warning threshold, and critical threshold before starting
 - **Settings Lock** - Configuration is locked once exam begins to prevent cheating
-- **Mandatory Notification Check** - Exam cannot start without browser notification permission
-- **Tab Title Updates** - Automatically shows remaining time only when tab is inactive
 - **Unit Tests** - 34 tests with high coverage for timer logic
 
 ## ⚖️ Trade-offs
@@ -248,30 +246,33 @@ With more time, I would add:
 ### Technical
 - [ ] **E2E tests** - Playwright/Cypress for full flows
 - [ ] **Dark mode** - CSS variables are ready, need toggle
-- [ ] **i18n** - Multi-language support
-- [ ] **PWA** - Offline support, install prompt
 - [ ] **Performance** - React.memo for heavy components
 
 ### UX
 - [ ] **Keyboard shortcuts** - Space for pause, R for reset
 - [ ] **Better sounds** - Multiple alert tones, volume control
 - [ ] **Animations** - Page transitions with Framer Motion
-- [ ] **Accessibility audit** - WCAG 2.1 AA compliance
 
 ## ⏱️ Time Spent
 
-| Task | Time |
-|------|------|
-| Project setup & TypeScript types | ~30 min |
-| Timer hook implementation | ~45 min |
-| Timer display components | ~45 min |
-| Alert system & Browser APIs | ~40 min |
-| Violation detection system | ~40 min |
-| Session summary screen | ~30 min |
-| Configurable settings & UX polish | ~45 min |
-| Unit tests | ~30 min |
-| Folder restructuring & documentation | ~30 min |
-| **Total** | **~6 hours** |
+| Phase | Task | Time |
+|-------|------|------|
+| **Planning** | Understanding requirements & acceptance criteria | ~1.5 hours |
+| | Research (React patterns, Browser APIs, best practices) | ~1.5 hours |
+| | Architecture planning & component design | ~1 hour |
+| **Development** | Project setup & TypeScript types | ~1 hour |
+| | Timer hook implementation | ~1.5 hours |
+| | Timer display components & styling | ~1.5 hours |
+| | Alert system & Browser notification APIs | ~1.5 hours |
+| | Violation detection system | ~1 hour |
+| | Session summary screen | ~1 hour |
+| | Configurable settings & validation | ~1 hour |
+| **Testing** | Unit tests for timer logic & utilities | ~1 hour |
+| | Manual testing & bug fixes | ~1 hour |
+| **Polish** | Responsive design & cross-browser testing | ~1 hour |
+| | Folder restructuring & code cleanup | ~30 min |
+| | Documentation (README, comments) | ~1 hour |
+| | **Total** | **~16 hours** |
 
 ## 🛠️ Technologies Used
 
@@ -281,11 +282,3 @@ With more time, I would add:
 - **Create React App** - Build tooling
 - **CSS Custom Properties** - Theming
 - **Web APIs** - Notifications, Audio, Visibility
-
-## 📄 License
-
-MIT License - feel free to use this code for your own projects.
-
----
-
-Built with ❤️ as a coding challenge submission.
