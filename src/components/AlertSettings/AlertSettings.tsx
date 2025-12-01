@@ -1,32 +1,14 @@
-/**
- * AlertSettings Component
- * 
- * Displays the alert system configuration.
- * - Browser Notifications: Mandatory (always enabled, requires permission)
- * - Tab Title Updates: Auto-enabled (always on)
- * - Sound Alerts: Optional (user can toggle)
- */
-
 import React from 'react';
 import { AlertConfig } from '../../types';
 import './AlertSettings.css';
-
 interface AlertSettingsProps {
-  /** Current alert configuration */
   config: AlertConfig;
-  /** Whether notifications are supported */
   isSupported: boolean;
-  /** Request notification permission */
   onRequestPermission: () => Promise<void>;
-  /** Toggle sound alerts */
   onToggleSound: () => void;
-  /** Whether the tab is currently hidden */
   isTabHidden: boolean;
 }
 
-/**
- * Alert settings panel.
- */
 export function AlertSettings({
   config,
   isSupported,
@@ -34,7 +16,7 @@ export function AlertSettings({
   onToggleSound,
   isTabHidden,
 }: AlertSettingsProps): React.JSX.Element {
-  // Check if permission needs to be granted
+
   const needsPermission = isSupported && !config.permissionGranted;
 
   return (

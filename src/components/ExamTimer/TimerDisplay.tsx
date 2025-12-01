@@ -1,43 +1,19 @@
-/**
- * TimerDisplay Component
- * 
- * Renders the countdown timer value with visual status indicators.
- * Changes appearance based on timer status (normal, warning, critical).
- */
-
 import React from 'react';
 import { TimerStatus } from '../../types';
 import { formatTime } from '../../utils';
 import './TimerDisplay.css';
 
 interface TimerDisplayProps {
-  /** Remaining time in seconds */
   timeRemaining: number;
-  /** Current timer status for styling */
   status: TimerStatus;
-  /** Whether the timer is actively counting down */
   isRunning: boolean;
-  /** Whether the timer is paused */
   isPaused: boolean;
-  /** Whether the timer has finished */
   isFinished: boolean;
-  /** Total exam duration in seconds (for progress calculation) */
   totalDuration: number;
-  /** Warning threshold in minutes (for alert message) */
   warningMinutes: number;
-  /** Critical threshold in minutes (for alert message) */
   criticalMinutes: number;
-}
+};
 
-/**
- * Displays the countdown timer with visual feedback.
- * 
- * Features:
- * - Large, monospace time display
- * - Status-based color changes
- * - Pulsing animation for critical status
- * - Accessibility support with aria-live
- */
 export function TimerDisplay({
   timeRemaining,
   status,
@@ -48,7 +24,7 @@ export function TimerDisplay({
   warningMinutes,
   criticalMinutes,
 }: TimerDisplayProps): React.JSX.Element {
-  // Determine the status message to display
+
   const getStatusMessage = (): string => {
     if (isFinished) return "Time's Up!";
     if (isPaused) return 'Paused';
@@ -56,7 +32,6 @@ export function TimerDisplay({
     return 'Ready to Start';
   };
 
-  // Format threshold for display (handle singular/plural)
   const formatThreshold = (minutes: number): string => {
     return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
   };

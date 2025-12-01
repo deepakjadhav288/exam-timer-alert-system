@@ -1,10 +1,3 @@
-/**
- * useTimer Hook Tests
- * 
- * Tests for the exam timer hook functionality.
- * Uses React Testing Library's renderHook for hook testing.
- */
-
 import { renderHook, act } from '@testing-library/react';
 import { useTimer } from '../../hooks/useTimer';
 
@@ -122,7 +115,7 @@ describe('useTimer', () => {
         result.current.reset();
       });
 
-      expect(result.current.timeRemaining).toBe(300); // Back to 5 minutes
+      expect(result.current.timeRemaining).toBe(300);
       expect(result.current.isRunning).toBe(false);
       expect(result.current.isPaused).toBe(false);
       expect(result.current.isFinished).toBe(false);
@@ -159,7 +152,6 @@ describe('useTimer', () => {
         result.current.start();
       });
 
-      // Advance past all time
       act(() => {
         jest.advanceTimersByTime(10000);
       });
@@ -188,15 +180,13 @@ describe('useTimer', () => {
       act(() => {
         jest.advanceTimersByTime(5000);
       });
-      
-      // Time should not have changed while paused
+
       expect(result.current.timeRemaining).toBe(57);
     });
   });
 
   describe('Status Updates', () => {
     it('updates status to warning when crossing threshold', () => {
-      // 6 minutes, warning at 5
       const { result } = renderHook(() => 
         useTimer({ duration: 6, warningAt: 5, criticalAt: 1 })
       );
@@ -207,7 +197,6 @@ describe('useTimer', () => {
         result.current.start();
       });
 
-      // Advance 61 seconds (to get below 5 min)
       act(() => {
         jest.advanceTimersByTime(61000);
       });
@@ -216,7 +205,6 @@ describe('useTimer', () => {
     });
 
     it('updates status to critical when crossing threshold', () => {
-      // 2 minutes, critical at 1
       const { result } = renderHook(() => 
         useTimer({ duration: 2, warningAt: 1.5, criticalAt: 1 })
       );
@@ -225,7 +213,6 @@ describe('useTimer', () => {
         result.current.start();
       });
 
-      // Advance 61 seconds (to get below 1 min)
       act(() => {
         jest.advanceTimersByTime(61000);
       });
@@ -245,7 +232,7 @@ describe('useTimer', () => {
       const timeAfterStart = result.current.timeRemaining;
 
       act(() => {
-        result.current.start(); // Try to start again
+        result.current.start();
       });
 
       expect(result.current.timeRemaining).toBe(timeAfterStart);
@@ -266,7 +253,6 @@ describe('useTimer', () => {
 
       expect(result.current.isFinished).toBe(true);
 
-      // Try to start again - should not work
       act(() => {
         result.current.start();
       });
@@ -287,13 +273,11 @@ describe('useTimer', () => {
         result.current.start();
       });
 
-      // Advance to just above warning (10 min + 1 sec remaining)
       act(() => {
         jest.advanceTimersByTime(1199000); // 19:59
       });
       expect(result.current.status).toBe('normal');
 
-      // Cross into warning
       act(() => {
         jest.advanceTimersByTime(2000);
       });

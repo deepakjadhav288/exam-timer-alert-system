@@ -1,48 +1,23 @@
-/**
- * useNotifications - Custom hook for browser notifications
- * 
- * Manages browser notification permissions and triggers notifications
- * at configurable time thresholds.
- * 
- * Features:
- * - Permission request handling
- * - Notification cooldown to prevent spam
- * - Sound alerts (optional)
- */
-
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { AlertConfig, TimerStatus } from '../types';
 import { isNotificationSupported } from '../utils';
 
 interface UseNotificationsProps {
-  /** Current remaining time in seconds */
   timeRemaining: number;
-  /** Current timer status */
   status: TimerStatus;
-  /** Whether the timer is running */
   isRunning: boolean;
-  /** Whether the timer has finished */
   isFinished: boolean;
-  /** Warning threshold in seconds */
   warningThreshold: number;
-  /** Critical threshold in seconds */
   criticalThreshold: number;
 }
 
 interface UseNotificationsReturn {
-  /** Current alert configuration */
   config: AlertConfig;
-  /** Request notification permission from browser */
   requestPermission: () => Promise<void>;
-  /** Toggle sound alerts on/off */
   toggleSound: () => void;
-  /** Whether notifications are supported in this browser */
   isSupported: boolean;
 }
 
-/**
- * Custom hook for managing browser notifications and sound alerts.
- */
 export function useNotifications({
   timeRemaining,
   status,
@@ -51,33 +26,25 @@ export function useNotifications({
   warningThreshold,
   criticalThreshold,
 }: UseNotificationsProps): UseNotificationsReturn {
-  // Check if notifications are supported
   const isSupported = isNotificationSupported();
 
-  // Get initial permission status
   const getInitialPermission = (): boolean => {
     return isSupported && Notification.permission === 'granted';
   };
 
-  // Track notification permission and settings
   const [config, setConfig] = useState<AlertConfig>(() => {
     const granted = getInitialPermission();
     return {
-      notificationsEnabled: granted, // Enable if already granted
+      notificationsEnabled: granted,
       soundEnabled: true,
       permissionGranted: granted,
     };
   });
 
-  // Track which alerts have been shown (to prevent duplicates)
   const alertsShownRef = useRef<Set<string>>(new Set());
-  
-  // Track previous time to detect threshold crossings
+
   const prevTimeRef = useRef<number>(timeRemaining);
 
-  /**
-   * Play alert sound using Web Audio API.
-   */
   const playAlertSound = useCallback(() => {
     if (!config.soundEnabled) return;
 
@@ -102,9 +69,6 @@ export function useNotifications({
     }
   }, [config.soundEnabled]);
 
-  /**
-   * Request notification permission from browser.
-   */
   const requestPermission = useCallback(async () => {
     if (!isSupported) return;
 
@@ -129,9 +93,6 @@ export function useNotifications({
     }
   }, [isSupported]);
 
-  /**
-   * Toggle sound alerts on/off.
-   */
   const toggleSound = useCallback(() => {
     setConfig(prev => ({
       ...prev,
@@ -139,9 +100,6 @@ export function useNotifications({
     }));
   }, []);
 
-  /**
-   * Show a browser notification.
-   */
   const showNotification = useCallback((title: string, body: string) => {
     if (!config.permissionGranted) {
       console.warn('Notification permission not granted');
@@ -163,10 +121,6 @@ export function useNotifications({
     }
   }, [config.permissionGranted]);
 
-  /**
-   * Effect to trigger alerts at specific thresholds.
-   * Uses threshold crossing detection for more reliable triggering.
-   */
   useEffect(() => {
     if (!isRunning || isFinished) {
       prevTimeRef.current = timeRemaining;
@@ -174,8 +128,7 @@ export function useNotifications({
     }
 
     const prevTime = prevTimeRef.current;
-    
-    // Check for warning threshold crossing (went from above to at/below)
+
     if (
       prevTime > warningThreshold &&
       timeRemaining <= warningThreshold &&

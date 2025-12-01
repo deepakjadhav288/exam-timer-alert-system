@@ -1,34 +1,16 @@
-/**
- * ExamConfig Component
- * 
- * Configuration panel for exam settings.
- * Allows setting total time and alert thresholds.
- * Settings are locked once the exam has started.
- */
-
 import React from 'react';
 import './ExamConfig.css';
 
 interface ExamConfigProps {
-  /** Total exam duration in minutes */
   duration: number;
-  /** Warning threshold in minutes */
   warningAt: number;
-  /** Critical threshold in minutes */
   criticalAt: number;
-  /** Whether the exam has started (locks settings) */
   isLocked: boolean;
-  /** Handler for duration change */
   onDurationChange: (minutes: number) => void;
-  /** Handler for warning threshold change */
   onWarningChange: (minutes: number) => void;
-  /** Handler for critical threshold change */
   onCriticalChange: (minutes: number) => void;
 }
 
-/**
- * Exam configuration panel with duration and alert settings.
- */
 export function ExamConfig({
   duration,
   warningAt,
@@ -136,4 +118,3 @@ export function ExamConfig({
 }
 
 export default ExamConfig;
-

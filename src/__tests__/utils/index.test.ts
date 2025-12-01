@@ -1,10 +1,3 @@
-/**
- * Utility Functions Tests
- * 
- * Tests for all pure utility functions.
- * These functions are stateless and easy to test.
- */
-
 import {
   formatTime,
   getTimerStatus,
@@ -32,7 +25,7 @@ describe('formatTime', () => {
   it('formats minutes and seconds', () => {
     expect(formatTime(90)).toBe('01:30');
     expect(formatTime(125)).toBe('02:05');
-    expect(formatTime(2700)).toBe('45:00'); // 45 minutes (default exam time)
+    expect(formatTime(2700)).toBe('45:00');
   });
 
   it('formats times over an hour', () => {
@@ -47,24 +40,23 @@ describe('formatTime', () => {
 });
 
 describe('getTimerStatus', () => {
-  // Default thresholds: WARNING = 300 (5 min), CRITICAL = 60 (1 min)
   
   it('returns "normal" for time above warning threshold', () => {
-    expect(getTimerStatus(600)).toBe('normal');  // 10 minutes
-    expect(getTimerStatus(301)).toBe('normal');  // Just above 5 min
+    expect(getTimerStatus(600)).toBe('normal');
+    expect(getTimerStatus(301)).toBe('normal');
   });
 
   it('returns "warning" for time at or below warning threshold but above critical', () => {
-    expect(getTimerStatus(300)).toBe('warning'); // Exactly 5 minutes
-    expect(getTimerStatus(180)).toBe('warning'); // 3 minutes
-    expect(getTimerStatus(61)).toBe('warning');  // Just above 1 min
+    expect(getTimerStatus(300)).toBe('warning');
+    expect(getTimerStatus(180)).toBe('warning');
+    expect(getTimerStatus(61)).toBe('warning');
   });
 
   it('returns "critical" for time at or below critical threshold', () => {
-    expect(getTimerStatus(60)).toBe('critical'); // Exactly 1 minute
-    expect(getTimerStatus(30)).toBe('critical'); // 30 seconds
-    expect(getTimerStatus(1)).toBe('critical');  // 1 second
-    expect(getTimerStatus(0)).toBe('critical');  // 0 seconds
+    expect(getTimerStatus(60)).toBe('critical');
+    expect(getTimerStatus(30)).toBe('critical');
+    expect(getTimerStatus(1)).toBe('critical');
+    expect(getTimerStatus(0)).toBe('critical');
   });
 });
 
@@ -79,7 +71,6 @@ describe('generateId', () => {
     for (let i = 0; i < 100; i++) {
       ids.add(generateId());
     }
-    // All 100 IDs should be unique
     expect(ids.size).toBe(100);
   });
 
@@ -113,7 +104,7 @@ describe('calculateElapsedTime', () => {
   it('calculates elapsed time in seconds', () => {
     const start = new Date('2024-01-15T10:00:00');
     const end = new Date('2024-01-15T10:05:00');
-    expect(calculateElapsedTime(start, end)).toBe(300); // 5 minutes
+    expect(calculateElapsedTime(start, end)).toBe(300);
   });
 
   it('returns 0 for same time', () => {
@@ -124,7 +115,6 @@ describe('calculateElapsedTime', () => {
   it('handles times across hours', () => {
     const start = new Date('2024-01-15T10:45:00');
     const end = new Date('2024-01-15T11:30:00');
-    expect(calculateElapsedTime(start, end)).toBe(2700); // 45 minutes
+    expect(calculateElapsedTime(start, end)).toBe(2700);
   });
 });
-

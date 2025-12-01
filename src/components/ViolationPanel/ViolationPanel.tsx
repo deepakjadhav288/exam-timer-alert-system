@@ -1,39 +1,21 @@
-/**
- * ViolationPanel Component
- * 
- * Provides simulation buttons for proctoring violations.
- * In a real application, these would be triggered automatically
- * by webcam/screen monitoring systems.
- */
-
 import React from 'react';
 import { ViolationType, VIOLATION_LABELS } from '../../types';
 import { ViolationBadge } from './ViolationBadge';
 import './ViolationPanel.css';
 
 interface ViolationPanelProps {
-  /** Total violation count */
   totalCount: number;
-  /** Violation counts by type */
   countByType: Record<ViolationType, number>;
-  /** Handler to add a violation */
   onViolation: (type: ViolationType) => void;
-  /** Whether the exam is active (timer running or paused) */
   isExamActive: boolean;
 }
 
-/**
- * Violation type configurations with icons and colors.
- */
 const VIOLATION_CONFIG: Record<ViolationType, { icon: string; color: string }> = {
   MULTIPLE_FACES: { icon: '👥', color: '#ef4444' },
   TAB_SWITCH: { icon: '🔄', color: '#f59e0b' },
   PROHIBITED_APP: { icon: '🚫', color: '#8b5cf6' },
 };
 
-/**
- * Panel for simulating proctoring violations.
- */
 export function ViolationPanel({
   totalCount,
   countByType,
@@ -48,7 +30,6 @@ export function ViolationPanel({
 
   return (
     <div className="violation-panel">
-      {/* Header with Badge */}
       <div className="violation-panel__header">
         <h3 className="violation-panel__title">
           Violation Simulation

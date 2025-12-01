@@ -1,16 +1,3 @@
-/**
- * useTimer - Custom hook for managing exam countdown timer
- * 
- * Features:
- * - Countdown from configurable duration
- * - Pause/Resume functionality
- * - Automatic status updates based on configurable thresholds
- * - Clean interval cleanup on unmount
- * 
- * @example
- * const timer = useTimer({ duration: 45, warningAt: 5, criticalAt: 1 });
- */
-
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   TimerState,
@@ -20,17 +7,11 @@ import {
 } from '../types';
 
 interface UseTimerConfig {
-  /** Exam duration in minutes */
   duration?: number;
-  /** Warning threshold in minutes */
   warningAt?: number;
-  /** Critical threshold in minutes */
   criticalAt?: number;
 }
 
-/**
- * Determines the timer status based on remaining time and thresholds.
- */
 function getTimerStatus(
   timeRemaining: number,
   warningThreshold: number,
@@ -45,28 +26,17 @@ function getTimerStatus(
   return 'normal';
 }
 
-/**
- * Custom hook for exam timer functionality.
- * 
- * @param config - Timer configuration (duration and thresholds in minutes)
- * @returns Timer state and control actions
- */
 export function useTimer(config: UseTimerConfig = {}): UseTimerReturn {
   const {
-    duration = DEFAULT_EXAM_DURATION / 60, // Convert default seconds to minutes
+    duration = DEFAULT_EXAM_DURATION / 60,
     warningAt = 5,
     criticalAt = 1,
   } = config;
 
-  // Convert minutes to seconds for internal use
   const initialDuration = duration * 60;
   const warningThreshold = warningAt * 60;
   const criticalThreshold = criticalAt * 60;
 
-  // -------------------------------------------------------------------------
-  // State Management
-  // -------------------------------------------------------------------------
-  
   const [timerState, setTimerState] = useState<TimerState>(() => ({
     timeRemaining: initialDuration,
     isRunning: false,
@@ -75,29 +45,19 @@ export function useTimer(config: UseTimerConfig = {}): UseTimerReturn {
     status: getTimerStatus(initialDuration, warningThreshold, criticalThreshold),
   }));
 
-  // Ref to store interval ID - prevents stale closure issues
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Ref to track if component is mounted - prevents state updates after unmount
   const isMountedRef = useRef<boolean>(true);
 
-  // Store thresholds in refs to avoid stale closures
   const warningThresholdRef = useRef(warningThreshold);
   const criticalThresholdRef = useRef(criticalThreshold);
 
-  // Update refs when thresholds change
   useEffect(() => {
     warningThresholdRef.current = warningThreshold;
     criticalThresholdRef.current = criticalThreshold;
   }, [warningThreshold, criticalThreshold]);
 
-  // -------------------------------------------------------------------------
-  // Interval Management
-  // -------------------------------------------------------------------------
 
-  /**
-   * Clears the active interval if one exists.
-   */
   const clearTimerInterval = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -105,9 +65,7 @@ export function useTimer(config: UseTimerConfig = {}): UseTimerReturn {
     }
   }, []);
 
-  /**
-   * Starts the countdown interval.
-   */
+
   const startInterval = useCallback(() => {
     clearTimerInterval();
 
@@ -151,13 +109,6 @@ export function useTimer(config: UseTimerConfig = {}): UseTimerReturn {
     }, 1000);
   }, [clearTimerInterval]);
 
-  // -------------------------------------------------------------------------
-  // Timer Actions
-  // -------------------------------------------------------------------------
-
-  /**
-   * Starts the timer or resumes from paused state.
-   */
   const start = useCallback(() => {
     setTimerState((prev) => {
       if (prev.isFinished) return prev;
@@ -171,9 +122,6 @@ export function useTimer(config: UseTimerConfig = {}): UseTimerReturn {
     });
   }, []);
 
-  /**
-   * Pauses the timer, preserving current time.
-   */
   const pause = useCallback(() => {
     clearTimerInterval();
     
@@ -188,9 +136,7 @@ export function useTimer(config: UseTimerConfig = {}): UseTimerReturn {
     });
   }, [clearTimerInterval]);
 
-  /**
-   * Toggles between running and paused states.
-   */
+
   const toggle = useCallback(() => {
     setTimerState((prev) => {
       if (prev.isFinished) return prev;
@@ -212,9 +158,6 @@ export function useTimer(config: UseTimerConfig = {}): UseTimerReturn {
     });
   }, [clearTimerInterval]);
 
-  /**
-   * Resets the timer to initial duration.
-   */
   const reset = useCallback(() => {
     clearTimerInterval();
     
@@ -227,13 +170,7 @@ export function useTimer(config: UseTimerConfig = {}): UseTimerReturn {
     });
   }, [initialDuration, warningThreshold, criticalThreshold, clearTimerInterval]);
 
-  // -------------------------------------------------------------------------
-  // Effects
-  // -------------------------------------------------------------------------
 
-  /**
-   * Effect to start/stop interval based on running state.
-   */
   useEffect(() => {
     if (timerState.isRunning && !timerState.isFinished) {
       startInterval();
@@ -244,9 +181,7 @@ export function useTimer(config: UseTimerConfig = {}): UseTimerReturn {
     };
   }, [timerState.isRunning, timerState.isFinished, startInterval, clearTimerInterval]);
 
-  /**
-   * Cleanup effect - marks component as unmounted.
-   */
+
   useEffect(() => {
     isMountedRef.current = true;
     
@@ -256,9 +191,7 @@ export function useTimer(config: UseTimerConfig = {}): UseTimerReturn {
     };
   }, [clearTimerInterval]);
 
-  /**
-   * Update timer when duration changes (only if not started).
-   */
+
   useEffect(() => {
     if (!timerState.isRunning && !timerState.isPaused && !timerState.isFinished) {
       setTimerState({
@@ -271,9 +204,6 @@ export function useTimer(config: UseTimerConfig = {}): UseTimerReturn {
     }
   }, [initialDuration, warningThreshold, criticalThreshold, timerState.isRunning, timerState.isPaused, timerState.isFinished]);
 
-  // -------------------------------------------------------------------------
-  // Return Value
-  // -------------------------------------------------------------------------
 
   return {
     timeRemaining: timerState.timeRemaining,

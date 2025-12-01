@@ -1,37 +1,15 @@
-/**
- * TimerControls Component
- * 
- * Provides control buttons for the exam timer.
- * Handles pause, resume, and reset actions.
- */
-
 import React from 'react';
 import './TimerControls.css';
 
 interface TimerControlsProps {
-  /** Whether the timer is currently running */
   isRunning: boolean;
-  /** Whether the timer is paused */
   isPaused: boolean;
-  /** Whether the timer has finished */
   isFinished: boolean;
-  /** Whether the exam can be started (notifications enabled) */
   canStart: boolean;
-  /** Toggle between pause and resume */
   onToggle: () => void;
-  /** Reset the timer to initial state */
   onReset: () => void;
 }
 
-/**
- * Control buttons for the exam timer.
- * 
- * States:
- * - Initial: Shows "Start Exam" button (disabled if notifications not enabled)
- * - Running: Shows "Pause" and "Reset" buttons
- * - Paused: Shows "Resume" and "Reset" buttons
- * - Finished: Shows "Restart Exam" button
- */
 export function TimerControls({
   isRunning,
   isPaused,
@@ -43,7 +21,6 @@ export function TimerControls({
   // Determine if this is the initial state (not started yet)
   const isInitialState = !isRunning && !isPaused && !isFinished;
 
-  // Determine primary button text based on state
   const getPrimaryButtonText = (): string => {
     if (isFinished) return 'Restart Exam';
     if (isRunning) return 'Pause';
@@ -51,19 +28,16 @@ export function TimerControls({
     return 'Start Exam';
   };
 
-  // Determine primary button icon
   const getPrimaryButtonIcon = (): string => {
     if (isFinished) return '🔄';
     if (isRunning) return '⏸️';
     return '▶️';
   };
 
-  // Check if start button should be disabled
   const isStartDisabled = isInitialState && !canStart;
 
   return (
     <div className="timer-controls">
-      {/* Warning message when notifications not enabled */}
       {isStartDisabled && (
         <div className="timer-controls__warning" role="alert">
           ⚠️ Enable Browser Notifications to start the exam

@@ -1,23 +1,11 @@
-/**
- * ViolationBadge Component
- * 
- * Displays the total violation count as a badge.
- * Shows different styles based on count severity.
- */
-
 import React from 'react';
 import './ViolationBadge.css';
 
 interface ViolationBadgeProps {
-  /** Number of violations */
   count: number;
-  /** Optional size variant */
   size?: 'small' | 'medium' | 'large';
 }
 
-/**
- * Badge showing violation count with severity-based styling.
- */
 export function ViolationBadge({
   count,
   size = 'medium',

@@ -1,12 +1,3 @@
-/**
- * TimerDisplay Component Styles
- * 
- * Visual states:
- * - Normal: Blue/neutral colors
- * - Warning: Yellow/amber colors with gentle pulse
- * - Critical: Red colors with attention-grabbing animation
- */
-
 .timer-display {
   text-align: center;
   padding: var(--space-6);

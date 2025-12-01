@@ -1,34 +1,19 @@
-/**
- * ViolationLog Component
- * 
- * Displays a timeline of all violations that occurred during the exam.
- * Shows timestamp, type, and icon for each violation.
- */
-
 import React from 'react';
 import { Violation, ViolationType, VIOLATION_LABELS } from '../../types';
 import { formatTimestamp } from '../../utils';
 import './ViolationLog.css';
 
 interface ViolationLogProps {
-  /** List of violations to display */
   violations: Violation[];
-  /** Maximum number of items to show (0 = all) */
   maxItems?: number;
 }
 
-/**
- * Icon mapping for violation types.
- */
 const VIOLATION_ICONS: Record<ViolationType, string> = {
   MULTIPLE_FACES: '👥',
   TAB_SWITCH: '🔄',
   PROHIBITED_APP: '🚫',
 };
 
-/**
- * Timeline log of violations.
- */
 export function ViolationLog({
   violations,
   maxItems = 0,

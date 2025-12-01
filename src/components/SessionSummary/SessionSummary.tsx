@@ -1,10 +1,3 @@
-/**
- * SessionSummary Component
- * 
- * Displays the exam session summary when the timer ends.
- * Shows total time taken, violations by type, and violation timeline.
- */
-
 import React from 'react';
 import {
   Violation,
@@ -15,30 +8,19 @@ import { formatTime, formatTimestamp } from '../../utils';
 import './SessionSummary.css';
 
 interface SessionSummaryProps {
-  /** Time remaining when exam ended (0 if completed) */
   timeRemaining: number;
-  /** Total exam duration in seconds (configured by user) */
   totalDuration: number;
-  /** All violations that occurred */
   violations: Violation[];
-  /** Violations grouped by type */
   countByType: Record<ViolationType, number>;
-  /** Handler to restart the exam */
   onRestart: () => void;
-}
+};
 
-/**
- * Icon mapping for violation types.
- */
 const VIOLATION_ICONS: Record<ViolationType, string> = {
   MULTIPLE_FACES: '👥',
   TAB_SWITCH: '🔄',
   PROHIBITED_APP: '🚫',
 };
 
-/**
- * Session summary displayed when exam ends.
- */
 export function SessionSummary({
   timeRemaining,
   totalDuration,
@@ -46,19 +28,16 @@ export function SessionSummary({
   countByType,
   onRestart,
 }: SessionSummaryProps): React.JSX.Element {
-  // Calculate time spent using actual configured duration
+
   const timeSpent = totalDuration - timeRemaining;
   const totalViolations = violations.length;
 
-  // Determine if exam was completed (timer reached 0)
   const wasCompleted = timeRemaining === 0;
 
-  // Sort violations by timestamp for timeline
   const sortedViolations = [...violations].sort(
     (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
   );
 
-  // Get violation types
   const violationTypes: ViolationType[] = ['MULTIPLE_FACES', 'TAB_SWITCH', 'PROHIBITED_APP'];
 
   return (
