@@ -2,9 +2,12 @@
 
 A React-based exam timer component with proctoring violation detection simulation, built as a take-home coding challenge.
 
+🔗 **Live Demo:** [https://exam-timer-alert-system.vercel.app](https://exam-timer-alert-system.vercel.app)
+
 ![React](https://img.shields.io/badge/React-19.2.0-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-4.4.2-3178C6?logo=typescript)
 ![Tests](https://img.shields.io/badge/Tests-34%20passed-brightgreen)
+![Deploy](https://img.shields.io/badge/Vercel-Deployed-black?logo=vercel)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## 🎯 Features
